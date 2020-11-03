@@ -12,10 +12,12 @@ import dagger.android.support.AndroidSupportInjectionModule;
 import edu.iastate.adamcorp.expensetracker.ExpenseTrackerApp;
 import edu.iastate.adamcorp.expensetracker.di.modules.ActivityBindingModule;
 import edu.iastate.adamcorp.expensetracker.di.modules.ApplicationModule;
+import edu.iastate.adamcorp.expensetracker.di.modules.ContextModule;
 
 @Singleton
 @Component(modules = {
         AndroidSupportInjectionModule.class,
+        ContextModule.class,
         ActivityBindingModule.class,
         ApplicationModule.class
 })

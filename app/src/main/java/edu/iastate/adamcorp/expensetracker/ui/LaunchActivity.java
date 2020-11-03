@@ -1,40 +1,53 @@
 package edu.iastate.adamcorp.expensetracker.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Arrays;
-import java.util.List;
+import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
 import edu.iastate.adamcorp.expensetracker.R;
+import edu.iastate.adamcorp.expensetracker.service.AuthenticationService;
 
 public class LaunchActivity extends DaggerAppCompatActivity {
     private static final String TAG = "LaunchActivity";
     private int RC_SIGN_IN = 9001;
 
     @Inject
-    FirebaseAuth auth;
+    AuthenticationService authenticationService;
 
-    List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.GoogleBuilder().build()
-    );
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                // Successfully signed in
+
+            } else {
+                // Error
+            }
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
-        if (auth.getUid() == null) {
-            startActivityForResult(AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setAvailableProviders(providers).build()
-                    , RC_SIGN_IN);
+        if (authenticationService.isAuthenticated()) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        } else {
+            startActivityForResult(authenticationService.buildSignInIntent(), RC_SIGN_IN);
+            return;
         }
     }
 }
