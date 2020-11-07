@@ -4,4 +4,8 @@
         android:icon="@drawable/ic_baseline_attach_money_24"
         android:id="@+id/expenses"
         android:title="Expenses" />
+    <item
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:id="@+id/settings"
+        android:title="Settings" />
 </menu>

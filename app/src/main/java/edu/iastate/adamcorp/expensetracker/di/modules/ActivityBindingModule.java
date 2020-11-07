@@ -10,6 +10,6 @@ public abstract class ActivityBindingModule {
     @ContributesAndroidInjector
     abstract LaunchActivity bindLaunchActivity();
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = MainActivityBindingModule.class)
     abstract MainActivity bindMainActivity();
 }

@@ -6,4 +6,8 @@
         android:id="@+id/expenseListFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseListFragment"
         android:label="ExpenseListFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>
