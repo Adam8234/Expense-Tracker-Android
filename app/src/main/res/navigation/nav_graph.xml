@@ -9,5 +9,17 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_expenseCategoriesFragment"
+            app:destination="@id/expenseCategoriesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenseSummaryFragment"
+        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseSummaryFragment"
+        android:label="ExpenseSummaryFragment" />
+    <fragment
+        android:id="@+id/expenseCategoriesFragment"
+        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoriesFragment"
+        android:label="ExpenseCategoriesFragment" />
 </navigation>

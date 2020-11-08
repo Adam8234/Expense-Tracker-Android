@@ -5,6 +5,10 @@
         android:id="@+id/expenses"
         android:title="Expenses" />
     <item
+        android:icon="@drawable/ic_baseline_assessment_24"
+        android:id="@+id/summary"
+        android:title="Summary" />
+    <item
         android:icon="@drawable/ic_baseline_settings_24"
         android:id="@+id/settings"
         android:title="Settings" />
