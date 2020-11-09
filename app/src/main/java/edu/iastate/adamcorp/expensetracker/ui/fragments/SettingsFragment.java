@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import javax.inject.Inject;
@@ -18,7 +22,7 @@ import dagger.android.HasAndroidInjector;
 import dagger.android.support.AndroidSupportInjection;
 import edu.iastate.adamcorp.expensetracker.R;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements HasAndroidInjector {
+public class SettingsFragment extends PreferenceFragmentCompat implements HasAndroidInjector, Preference.OnPreferenceClickListener {
     @Inject
     DispatchingAndroidInjector<Object> androidInjector;
 
@@ -31,10 +35,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+        findPreference("expense_categories").setOnPreferenceClickListener(this);
     }
 
     @Override
     public AndroidInjector<Object> androidInjector() {
         return androidInjector;
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if(preference.getKey().equals("expense_categories")) {
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.navigate(R.id.action_settingsFragment_to_expenseCategoriesFragment);
+            return true;
+        }
+        return false;
     }
 }

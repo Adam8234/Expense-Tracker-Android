@@ -2,11 +2,20 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditTextPreference
-        android:defaultValue="$"
-        android:key="currency_symbol"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="Currency Symbol"
-        app:useSimpleSummaryProvider="true" />
+    <PreferenceCategory android:summary="Expense Preferences">
+        <EditTextPreference
+            android:defaultValue="$"
+            android:key="currency_symbol"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="Change currency symbol for expenses"
+            android:title="Currency Symbol"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            android:key="expense_categories"
+            android:summary="Add or Remove expense categories"
+            app:title="Expense Categories" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

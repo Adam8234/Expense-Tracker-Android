@@ -5,7 +5,7 @@ import dagger.android.ContributesAndroidInjector;
 import edu.iastate.adamcorp.expensetracker.ui.LaunchActivity;
 import edu.iastate.adamcorp.expensetracker.ui.MainActivity;
 
-@Module
+@Module(includes = ViewModelModule.class)
 public abstract class ActivityBindingModule {
     @ContributesAndroidInjector
     abstract LaunchActivity bindLaunchActivity();
