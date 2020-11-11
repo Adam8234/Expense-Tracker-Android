@@ -1,7 +1,9 @@
 package edu.iastate.adamcorp.expensetracker.data;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import javax.inject.Inject;
@@ -25,5 +27,9 @@ public class UserRepository {
     public DocumentReference getUserDocument() {
         return firebaseFirestore.collection("users")
                 .document(authenticationService.getUserId());
+    }
+
+    public void changeCurrencySymbol(String currency) {
+        getUserDocument().update("symbol", currency);
     }
 }

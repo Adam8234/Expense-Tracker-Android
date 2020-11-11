@@ -11,13 +11,18 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import javax.inject.Inject;
+
 import dagger.android.support.DaggerAppCompatActivity;
 import edu.iastate.adamcorp.expensetracker.R;
+import edu.iastate.adamcorp.expensetracker.data.ExpensesRepository;
 
 public class MainActivity extends DaggerAppCompatActivity {
     private BottomNavigationView mNavBottomView;
     private Toolbar mToolbar;
     private NavController mNavController;
+    @Inject
+    ExpensesRepository expensesRepository;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -1,18 +1,21 @@
 package edu.iastate.adamcorp.expensetracker.ui.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import javax.inject.Inject;
 
@@ -21,10 +24,14 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasAndroidInjector;
 import dagger.android.support.AndroidSupportInjection;
 import edu.iastate.adamcorp.expensetracker.R;
+import edu.iastate.adamcorp.expensetracker.data.UserRepository;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements HasAndroidInjector, Preference.OnPreferenceClickListener {
+public class SettingsFragment extends PreferenceFragmentCompat implements HasAndroidInjector, Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
     @Inject
     DispatchingAndroidInjector<Object> androidInjector;
+
+    @Inject
+    UserRepository userRepository;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -35,7 +42,24 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
-        findPreference("expense_categories").setOnPreferenceClickListener(this);
+
+        Preference expense_categories = findPreference("expense_categories");
+        final EditTextPreference currency_symbol = findPreference("currency_symbol");
+
+        expense_categories.setOnPreferenceClickListener(this);
+        currency_symbol.setOnPreferenceChangeListener(this);
+
+        userRepository.getUserDocument().addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                String symbol = (String) value.get("symbol");
+                if(symbol == null) {
+                    symbol = "$";
+                    userRepository.changeCurrencySymbol(symbol);
+                }
+                currency_symbol.setText(symbol);
+            }
+        });
     }
 
     @Override
@@ -45,9 +69,18 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if(preference.getKey().equals("expense_categories")) {
+        if (preference.getKey().equals("expense_categories")) {
             NavController navController = NavHostFragment.findNavController(this);
             navController.navigate(R.id.action_settingsFragment_to_expenseCategoriesFragment);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if (preference.getKey().equals("currency_symbol")) {
+            userRepository.changeCurrencySymbol((String) newValue);
             return true;
         }
         return false;

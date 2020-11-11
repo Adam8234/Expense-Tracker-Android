@@ -4,13 +4,11 @@
 
     <PreferenceCategory android:summary="Expense Preferences">
         <EditTextPreference
-            android:defaultValue="$"
             android:key="currency_symbol"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:summary="Change currency symbol for expenses"
-            android:title="Currency Symbol"
-            app:useSimpleSummaryProvider="true" />
+            android:title="Currency Symbol" />
 
         <EditTextPreference
             android:inputType="number"
