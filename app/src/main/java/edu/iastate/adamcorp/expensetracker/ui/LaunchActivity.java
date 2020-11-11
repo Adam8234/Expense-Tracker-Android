@@ -31,7 +31,8 @@ public class LaunchActivity extends DaggerAppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
             } else {
                 // Error
             }

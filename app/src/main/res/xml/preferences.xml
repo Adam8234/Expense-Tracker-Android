@@ -12,6 +12,11 @@
             android:title="Currency Symbol"
             app:useSimpleSummaryProvider="true" />
 
+        <EditTextPreference
+            android:inputType="number"
+            android:summary="Set monthly budget and get warning when you are close to your monthly budget"
+            android:title="Monthly Budget" />
+
         <Preference
             android:key="expense_categories"
             android:summary="Add or Remove expense categories"
