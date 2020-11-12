@@ -7,10 +7,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -24,6 +29,7 @@ public class MainActivity extends DaggerAppCompatActivity {
     private NavController mNavController;
     @Inject
     ExpensesRepository expensesRepository;
+    private AppBarConfiguration appBarConfiguration;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,8 +40,24 @@ public class MainActivity extends DaggerAppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
 
         mNavController = NavHostFragment.findNavController(getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment));
-        NavigationUI.setupWithNavController(mNavBottomView, mNavController);
-
         setSupportActionBar(mToolbar);
+        Set<Integer> topLevelDestinations = new HashSet<>();
+        topLevelDestinations.add(R.id.expenseListFragment);
+        topLevelDestinations.add(R.id.expenseCategoriesFragment);
+        topLevelDestinations.add(R.id.expenseSummaryFragment);
+        topLevelDestinations.add(R.id.settingsFragment);
+        appBarConfiguration =
+                new AppBarConfiguration.Builder(topLevelDestinations).build();
+
+        NavigationUI.setupWithNavController(mNavBottomView, mNavController);
+        NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration);
+    }
+
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 }

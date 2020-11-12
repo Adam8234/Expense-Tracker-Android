@@ -6,7 +6,7 @@
     <fragment
         android:id="@+id/expenseListFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseListFragment"
-        android:label="ExpenseListFragment">
+        android:label="Expenses">
         <action
             android:id="@+id/action_expenseListFragment_to_addExpenseFragment"
             app:destination="@id/addExpenseFragment"
@@ -17,6 +17,15 @@
         <action
             android:id="@+id/action_expenseListFragment_to_editExpenseFragment"
             app:destination="@id/editExpenseFragment" />
+        <action
+            android:id="@+id/action_expenseListFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+        <action
+            android:id="@+id/action_expenseListFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_expenseListFragment_to_expenseCategoriesFragment"
+            app:destination="@id/expenseCategoriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -29,19 +38,19 @@
     <fragment
         android:id="@+id/expenseSummaryFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseSummaryFragment"
-        android:label="ExpenseSummaryFragment" />
+        android:label="Summary" />
     <fragment
         android:id="@+id/expenseCategoriesFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoriesFragment"
-        android:label="ExpenseCategoriesFragment" />
+        android:label="Categories" />
     <fragment
         android:id="@+id/addExpenseFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.AddExpenseFragment"
-        android:label="AddExpenseFragment" />
+        android:label="Add Expense" />
     <fragment
         android:id="@+id/editExpenseFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.EditExpenseFragment"
-        android:label="EditExpenseFragment"
+        android:label="Edit Expense"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
