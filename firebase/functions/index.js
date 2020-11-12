@@ -87,20 +87,30 @@ exports.writeExpenseInCategory = functions.firestore
       .collection("categories")
       .doc(context.params.categoryId);
     let categorySnap = await categoryRef.get();
-    let totals = categorySnap.data().totalExpenses;
+    let totalAmount = categorySnap.data().totalExpenses;
+    let totalExpenses = categorySnap.data().numOfExpenses;
+    if (!totalExpenses) {
+      totalExpenses = 0;
+    }
     //Add zero value
-    if (!totals) {
-      totals = 0.0;
+    if (!totalAmount) {
+      totalAmount = 0.0;
     }
     if (!change.before.exists) {
-      totals = totals + change.after.data().amount;
+      totalAmount = totalAmount + change.after.data().amount;
+      totalExpenses += 1;
     } else if (!change.after.exists) {
-      totals = totals - change.before.data().amount;
+      totalAmount = totalAmount - change.before.data().amount;
+      totalExpenses -= 1;
     } else {
-      totals =
-        totals + (change.after.data().amount - change.before.data().amount);
+      totalAmount =
+        totalAmount +
+        (change.after.data().amount - change.before.data().amount);
     }
-    return categoryRef.update({ totalExpenses: totals });
+    return categoryRef.update({
+      totalExpenses: totalAmount,
+      numOfExpenses: totalExpenses,
+    });
   });
 
 /**
