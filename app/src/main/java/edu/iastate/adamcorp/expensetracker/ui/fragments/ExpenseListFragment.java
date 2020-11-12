@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,11 +23,8 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerFragment;
 import edu.iastate.adamcorp.expensetracker.R;
 import edu.iastate.adamcorp.expensetracker.data.models.Expense;
-import edu.iastate.adamcorp.expensetracker.data.models.ExpenseCategory;
 import edu.iastate.adamcorp.expensetracker.di.ViewModelFactory;
-import edu.iastate.adamcorp.expensetracker.ui.viewholders.ExpenseCategoryHolder;
 import edu.iastate.adamcorp.expensetracker.ui.viewholders.ExpenseViewHolder;
-import edu.iastate.adamcorp.expensetracker.ui.viewmodel.ExpenseCategoryViewModel;
 import edu.iastate.adamcorp.expensetracker.ui.viewmodel.ExpenseListViewModel;
 
 public class ExpenseListFragment extends DaggerFragment implements View.OnClickListener {
@@ -47,7 +46,6 @@ public class ExpenseListFragment extends DaggerFragment implements View.OnClickL
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
 
 
-
         LinearLayoutManager manager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(manager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -66,11 +64,18 @@ public class ExpenseListFragment extends DaggerFragment implements View.OnClickL
 
             @Override
             protected void onBindViewHolder(@NonNull ExpenseViewHolder holder, final int position, @NonNull Expense model) {
+                final String id = getSnapshots().getSnapshot(position).getId();
                 holder.updateView(model);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ExpenseListFragmentDirections.ActionExpenseListFragmentToEditExpenseFragment action = ExpenseListFragmentDirections.actionExpenseListFragmentToEditExpenseFragment(id);
+                        NavHostFragment.findNavController(ExpenseListFragment.this).navigate(action);
+                    }
+                });
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        String id = getSnapshots().getSnapshot(position).getId();
                         //expenseCategoryViewModel.deleteCategory(id);
                         return false;
                     }
@@ -80,9 +85,9 @@ public class ExpenseListFragment extends DaggerFragment implements View.OnClickL
         recyclerView.setAdapter(recyclerAdapter);
 
         final FloatingActionButton fab = view.findViewById(R.id.floating_action_button);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 0)
                     fab.hide();
                 else if (dy < 0)
@@ -108,6 +113,9 @@ public class ExpenseListFragment extends DaggerFragment implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-
+        if (view.getId() == R.id.floating_action_button) {
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.navigate(R.id.action_expenseListFragment_to_addExpenseFragment);
+        }
     }
 }

@@ -2,7 +2,7 @@ package edu.iastate.adamcorp.expensetracker.data;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.Timestamp;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -27,14 +27,26 @@ public class ExpensesRepository implements FirebaseAuth.AuthStateListener {
         this.firebaseFirestore = firebaseFirestore;
         this.userRepository = userRepository;
         firebaseAuth.addAuthStateListener(this);
+
+//        for (int i = 0; i < 15; i++) {
+//            addExpense(new ExpenseQueue("Test", "pS5wbl39sesS1OniyaSp", Math.random() * 500 + 20, Timestamp.now()));
+//        }
     }
 
     public Query getExpenses() {
         return userRepository.getUserDocument().collection("expenses").orderBy("date", Query.Direction.DESCENDING);
     }
 
+    public DocumentReference getExpense(String expenseId) {
+        return userRepository.getUserDocument().collection("expenses").document(expenseId);
+    }
+
     public CollectionReference getExpenseQueue() {
         return userRepository.getUserDocument().collection("expense_queue");
+    }
+
+    public Task<Void> updateExpense(String id, Expense expense) {
+        return getExpense(id).set(expense);
     }
 
     public DocumentReference addExpense(ExpenseQueue expense) {

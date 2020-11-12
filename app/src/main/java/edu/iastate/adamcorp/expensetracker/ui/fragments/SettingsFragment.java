@@ -43,10 +43,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
-        Preference expense_categories = findPreference("expense_categories");
+        //Preference expense_categories = findPreference("expense_categories");
         final EditTextPreference currency_symbol = findPreference("currency_symbol");
 
-        expense_categories.setOnPreferenceClickListener(this);
+        //expense_categories.setOnPreferenceClickListener(this);
         currency_symbol.setOnPreferenceChangeListener(this);
 
         userRepository.getUserDocument().addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -71,7 +71,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
     public boolean onPreferenceClick(Preference preference) {
         if (preference.getKey().equals("expense_categories")) {
             NavController navController = NavHostFragment.findNavController(this);
-            navController.navigate(R.id.action_settingsFragment_to_expenseCategoriesFragment);
+            //navController.navigate(R.id.action_settingsFragment_to_expenseCategoriesFragment);
             return true;
         }
         return false;

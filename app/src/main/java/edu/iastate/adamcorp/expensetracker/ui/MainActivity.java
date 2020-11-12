@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -33,23 +34,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
 
         mNavController = NavHostFragment.findNavController(getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment));
-        mNavBottomView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.expenses:
-                        mNavController.navigate(R.id.expenseListFragment);
-                        return true;
-                    case R.id.settings:
-                        mNavController.navigate(R.id.settingsFragment);
-                        return true;
-                    case R.id.summary:
-                        mNavController.navigate(R.id.expenseSummaryFragment);
-                        return true;
-                }
-                return false;
-            }
-        });
+        NavigationUI.setupWithNavController(mNavBottomView, mNavController);
 
         setSupportActionBar(mToolbar);
     }

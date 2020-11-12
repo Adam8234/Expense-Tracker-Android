@@ -15,10 +15,10 @@
             android:summary="Set monthly budget and get warning when you are close to your monthly budget"
             android:title="Monthly Budget" />
 
-        <Preference
+        <!--<Preference
             android:key="expense_categories"
             android:summary="Add or Remove expense categories"
-            app:title="Expense Categories" />
+            app:title="Expense Categories" />-->
     </PreferenceCategory>
 
 </PreferenceScreen>

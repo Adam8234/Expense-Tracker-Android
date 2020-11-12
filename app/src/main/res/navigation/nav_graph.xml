@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/expenseListFragment">
     <fragment
         android:id="@+id/expenseListFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseListFragment"
-        android:label="ExpenseListFragment" />
+        android:label="ExpenseListFragment">
+        <action
+            android:id="@+id/action_expenseListFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_expenseListFragment_to_editExpenseFragment"
+            app:destination="@id/editExpenseFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.SettingsFragment"
-        android:label="SettingsFragment" >
-        <action
-            android:id="@+id/action_settingsFragment_to_expenseCategoriesFragment"
-            app:destination="@id/expenseCategoriesFragment" />
-    </fragment>
+        android:label="SettingsFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     <fragment
         android:id="@+id/expenseSummaryFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseSummaryFragment"
@@ -22,4 +34,20 @@
         android:id="@+id/expenseCategoriesFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoriesFragment"
         android:label="ExpenseCategoriesFragment" />
+    <fragment
+        android:id="@+id/addExpenseFragment"
+        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.AddExpenseFragment"
+        android:label="AddExpenseFragment" />
+    <fragment
+        android:id="@+id/editExpenseFragment"
+        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.EditExpenseFragment"
+        android:label="EditExpenseFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim">
+        <argument
+            android:name="expense_id"
+            app:argType="string" />
+    </fragment>
 </navigation>
