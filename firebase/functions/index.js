@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { user } = require("firebase-functions/lib/providers/auth");
 
 admin.initializeApp(functions.config().firebase);
 
@@ -31,19 +32,79 @@ exports.addExpense = functions.firestore
       data.symbol = "$";
     }
 
-    expensesRef.add(data);
+    const expense = await expensesRef.add(data);
+    categorySnapshot.ref.collection("expenses").doc(expense.id).set(data);
 
     snap.ref.delete();
   });
 
-// exports.deleteExpense = functions.firestore
-//   .document("users/{userId}/expense/{docId}")
-//   .onDelete((snap, context) => {
-//     //Do nothing... for now...
-//   });
+exports.updateExpense = functions.firestore
+  .document("users/{userId}/expenses/{docId}")
+  .onUpdate(async (change, context) => {
+    const userRef = usersCollection.doc(context.params.userId);
+    const categoriesRef = userRef.collection("categories");
+    const docRef = change.after.ref;
+    //Update category
+    if (change.before.data().categoryId !== change.after.data().categoryId) {
+      //Delete old expense in category
+      categoriesRef
+        .doc(change.before.data().categoryId)
+        .collection("expenses")
+        .doc(context.params.docId)
+        .delete();
+
+      const categoryRef = categoriesRef.doc(change.after.data().categoryId);
+      const categorySnap = await categoryRef.get();
+
+      await docRef.update({ category: categorySnap.data() });
+    }
+
+    const docSnap = await docRef.get();
+    return categoriesRef
+      .doc(change.after.data().categoryId)
+      .collection("expenses")
+      .doc(context.params.docId)
+      .set(docSnap.data());
+  });
+
+exports.deleteExpense = functions.firestore
+  .document("users/{userId}/expenses/{docId}")
+  .onDelete((snap, context) => {
+    const userRef = usersCollection.doc(context.params.userId);
+    return userRef
+      .collection("categories")
+      .doc(snap.data().categoryId)
+      .collection("expenses")
+      .doc(context.params.docId)
+      .delete();
+  });
+
+exports.writeExpenseInCategory = functions.firestore
+  .document("users/{userId}/categories/{categoryId}/expenses/{docId}")
+  .onWrite(async (change, context) => {
+    const categoryRef = usersCollection
+      .doc(context.params.userId)
+      .collection("categories")
+      .doc(context.params.categoryId);
+    let categorySnap = await categoryRef.get();
+    let totals = categorySnap.data().totalExpenses;
+    //Add zero value
+    if (!totals) {
+      totals = 0.0;
+    }
+    if (!change.before.exists) {
+      totals = totals + change.after.data().amount;
+    } else if (!change.after.exists) {
+      totals = totals - change.before.data().amount;
+    } else {
+      totals =
+        totals + (change.after.data().amount - change.before.data().amount);
+    }
+    return categoryRef.update({ totalExpenses: totals });
+  });
 
 /**
- * Whenever a use changes, we need to update our denormalized data
+ * Whenever a user changes, we need to update our denormalized data
  */
 exports.writeUser = functions.firestore
   .document("users/{userId}")
