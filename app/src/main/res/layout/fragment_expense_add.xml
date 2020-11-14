@@ -9,8 +9,10 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_name"
-        android:layout_width="347dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+
         android:hint="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,8 +26,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_category"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="347dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="Category"
@@ -42,23 +44,20 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_amount"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="347dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="Amount"
-        app:layout_constraintBottom_toTopOf="@+id/add_expense_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout_category"
-        app:layout_constraintVertical_bias="0.25"
         app:prefixText="$">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/amount_edit_text"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:layout_width="match_parent"
+            android:inputType="numberDecimal"
+            android:layout_height="wrap_content"
             tools:text="250" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -67,7 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:width="0dp"
-        android:text="Add Expense"
+        android:text="Update Expense"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
