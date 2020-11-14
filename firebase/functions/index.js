@@ -108,7 +108,7 @@ exports.writeExpenseInCategory = functions.firestore
         (change.after.data().amount - change.before.data().amount);
     }
     return categoryRef.update({
-      totalExpenses: totalAmount.toFixed(2),
+      totalExpenses: parseFloat(totalAmount.toFixed(2)),
       numOfExpenses: totalExpenses,
     });
   });
