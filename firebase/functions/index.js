@@ -1,6 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const { user } = require("firebase-functions/lib/providers/auth");
+const Timestamp = require("firebase-admin").firestore.Timestamp;
 
 admin.initializeApp(functions.config().firebase);
 
@@ -36,6 +36,14 @@ exports.addExpense = functions.firestore
     categorySnapshot.ref.collection("expenses").doc(expense.id).set(data);
 
     snap.ref.delete();
+  });
+
+exports.createExpense = functions.firestore
+  .document("users/{userId}/expenses/{docId}")
+  .onCreate((snap, context) => {
+    let date = snap.data().date.toDate();
+    let id = date.getFullYear() + "-" + date.getMonth();
+    usersCollection.doc(context.params.userId);
   });
 
 exports.updateExpense = functions.firestore
