@@ -50,4 +50,10 @@ public class UserRepository {
         map.put("symbol", currency);
         getUserDocument().set(map, SetOptions.merge());
     }
+
+    public void changeMonthlyBudget(Double budget) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("monthlyBudget", budget);
+        getUserDocument().set(map, SetOptions.merge());
+    }
 }

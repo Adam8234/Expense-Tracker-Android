@@ -45,18 +45,26 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
 
         //Preference expense_categories = findPreference("expense_categories");
         final EditTextPreference currency_symbol = findPreference("currency_symbol");
+        final EditTextPreference monthly_budget = findPreference("monthly_budget");
 
         //expense_categories.setOnPreferenceClickListener(this);
         currency_symbol.setOnPreferenceChangeListener(this);
+        monthly_budget.setOnPreferenceChangeListener(this);
 
         userRepository.getUserDocument().addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 String symbol = (String) value.get("symbol");
+                Double budget = (Double) value.get("monthlyBudget");
                 if(symbol == null) {
                     symbol = "$";
                     userRepository.changeCurrencySymbol(symbol);
                 }
+                if(budget == null) {
+                    budget = -1.0;
+                    userRepository.changeMonthlyBudget(-1.0);
+                }
+                monthly_budget.setText(budget.toString());
                 currency_symbol.setText(symbol);
             }
         });
@@ -82,6 +90,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
         if (preference.getKey().equals("currency_symbol")) {
             userRepository.changeCurrencySymbol((String) newValue);
             return true;
+        } else if(preference.getKey().equals("monthly_budget")) {
+            userRepository.changeMonthlyBudget((Double) newValue);
         }
         return false;
     }

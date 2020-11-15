@@ -11,8 +11,9 @@
             android:title="Currency Symbol" />
 
         <EditTextPreference
-            android:inputType="number"
-            android:summary="Set monthly budget and get warning when you are close to your monthly budget"
+            android:key="monthly_budget"
+            android:inputType="numberDecimal"
+            android:summary="Set monthly budget and get warning when you are close to your monthly budget. Set to -1 to set no budget."
             android:title="Monthly Budget" />
 
         <!--<Preference

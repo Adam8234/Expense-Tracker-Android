@@ -118,6 +118,8 @@ async function updateTotalsInDoc(
 ) {
   const afterAmount: number = change.after.data()?.amount;
   const beforeAmount: number = change.before.data()?.amount;
+  const beforeRefExists = (await beforeRef.get()).exists;
+  const afterRefExists = (await afterRef.get()).exists;
 
   if (!change.before.exists) {
     //Created
@@ -132,7 +134,7 @@ async function updateTotalsInDoc(
     return;
   } else if (!change.after.exists) {
     //Deleted
-    if ((await beforeRef.get()).exists) {
+    if (beforeRefExists) {
       batch.set(
         beforeRef,
         {
@@ -145,13 +147,15 @@ async function updateTotalsInDoc(
     return;
   } else if (beforeRef.isEqual(afterRef)) {
     //Update Amount
-    batch.set(
-      afterRef,
-      {
-        totalAmount: FieldValue.increment(afterAmount - beforeAmount),
-      },
-      { merge: true }
-    );
+    if (afterRefExists) {
+      batch.set(
+        afterRef,
+        {
+          totalAmount: FieldValue.increment(afterAmount - beforeAmount),
+        },
+        { merge: true }
+      );
+    }
   } else {
     //Changed ID
     batch.set(

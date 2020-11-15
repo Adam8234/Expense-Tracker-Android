@@ -1,20 +1,23 @@
 package edu.iastate.adamcorp.expensetracker.data.models;
 
 public class User {
-    private String currencySymbol;
+    private String symbol;
     private double monthlyBudget;
 
+    public User() {
+    }
+
     public User(String currencySymbol, double monthlyBudget) {
-        this.currencySymbol = currencySymbol;
+        this.symbol = currencySymbol;
         this.monthlyBudget = monthlyBudget;
     }
 
-    public String getCurrencySymbol() {
-        return currencySymbol;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setCurrencySymbol(String currencySymbol) {
-        this.currencySymbol = currencySymbol;
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public double getMonthlyBudget() {

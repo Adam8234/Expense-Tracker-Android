@@ -84,11 +84,10 @@ export async function handleMonthlyCategoryWrite(
     const categorySnap = await getCategoriesCollection(context)
       .doc(change.after.id)
       .get();
-    await change.after.ref.set(
-      { categoryId: change.after.id },
+    return change.after.ref.set(
+      { categoryId: change.after.id, name: categorySnap.data()?.name },
       { merge: true }
     );
-    return change.after.ref.set(categorySnap.data()!!, { merge: true });
   } else if (!change.after.exists) {
     //Delete
   } else if (change.after.data()?.totalExpenses <= 0) {
