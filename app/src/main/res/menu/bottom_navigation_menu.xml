@@ -5,9 +5,9 @@
         android:id="@+id/expenseListFragment"
         android:title="Expenses" />
     <item
-        android:icon="@drawable/ic_baseline_assessment_24"
+        android:icon="@drawable/ic_baseline_calendar_today_24"
         android:id="@+id/expenseSummaryFragment"
-        android:title="Summary" />
+        android:title="Monthly" />
     <item
         android:icon="@drawable/ic_baseline_shopping_cart_24"
         android:id="@+id/expenseCategoriesFragment"

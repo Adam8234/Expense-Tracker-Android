@@ -4,10 +4,7 @@ import {
 } from "@google-cloud/firestore";
 import { Change, EventContext } from "firebase-functions";
 import { db } from ".";
-import {
-  getCategoriesCollection,
-  getRootExpensesCollection,
-} from "./references";
+import { getRootExpensesCollection } from "./references";
 
 export async function handleDeleteCategory(
   snap: QueryDocumentSnapshot,
@@ -23,50 +20,32 @@ export async function handleDeleteCategory(
   return batch.commit();
 }
 
-export async function handleUpdateCategory(
-  change: Change<QueryDocumentSnapshot>,
-  context: EventContext
-) {
-  const expensesSnapshots = await getRootExpensesCollection(context)
-    .where("categoryId", "==", context.params.docId)
-    .get();
-  const batch = db.batch();
-  for (var snapshot of expensesSnapshots.docs) {
-    batch.update(snapshot.ref, { category: change.after.data() });
-  }
-  return batch.commit();
-}
-
-export async function handleExpenseUpdateInCategory(
+export async function handleWriteCategory(
   change: Change<DocumentSnapshot>,
   context: EventContext
 ) {
-  const categoryRef = getCategoriesCollection(context).doc(
-    context.params.categoryId
-  );
-  let categorySnap = await categoryRef.get();
-  let totalAmount = categorySnap.data().totalExpenses;
-  let totalExpenses = categorySnap.data().numOfExpenses;
-
-  if (!totalExpenses) {
-    totalExpenses = 0;
-  }
-  //Add zero value
-  if (!totalAmount) {
-    totalAmount = 0.0;
-  }
   if (!change.before.exists) {
-    totalAmount = totalAmount + change.after.data().amount;
-    totalExpenses += 1;
+    //Created
   } else if (!change.after.exists) {
-    totalAmount = totalAmount - change.before.data().amount;
-    totalExpenses -= 1;
+    //Deleted
+    const expenseSnaps = await getRootExpensesCollection(context)
+      .where("categoryId", "==", change.before.id)
+      .get();
+    let batch = db.batch();
+    for (var expenseDeleteSnap of expenseSnaps.docs) {
+      batch.delete(expenseDeleteSnap.ref);
+    }
+    return batch.commit();
   } else {
-    totalAmount =
-      totalAmount + (change.after.data().amount - change.before.data().amount);
+    //Updated
+    const expenseSnaps = await getRootExpensesCollection(context)
+      .where("categoryId", "==", change.before.id)
+      .get();
+    let batch = db.batch();
+    for (var expenseSnap of expenseSnaps.docs) {
+      batch.update(expenseSnap.ref, "category", change.after.data());
+    }
+    return batch.commit();
   }
-  return categoryRef.update({
-    totalExpenses: parseFloat(totalAmount.toFixed(2)),
-    numOfExpenses: totalExpenses,
-  });
+  return null;
 }

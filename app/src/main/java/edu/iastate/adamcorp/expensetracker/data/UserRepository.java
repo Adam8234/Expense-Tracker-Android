@@ -5,10 +5,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.HashMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import edu.iastate.adamcorp.expensetracker.data.models.User;
 import edu.iastate.adamcorp.expensetracker.service.AuthenticationService;
 
 @Singleton
@@ -30,6 +34,8 @@ public class UserRepository {
     }
 
     public void changeCurrencySymbol(String currency) {
-        getUserDocument().update("symbol", currency);
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("symbol", currency);
+        getUserDocument().set(map, SetOptions.merge());
     }
 }

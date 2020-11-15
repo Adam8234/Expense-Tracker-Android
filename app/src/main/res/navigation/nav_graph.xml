@@ -33,7 +33,11 @@
     <fragment
         android:id="@+id/expenseSummaryFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseSummaryFragment"
-        android:label="Summary" />
+        android:label="Monthly Expenses">
+        <action
+            android:id="@+id/action_expenseSummaryFragment_to_editExpenseFragment"
+            app:destination="@id/editExpenseFragment" />
+    </fragment>
     <fragment
         android:id="@+id/expenseCategoriesFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoriesFragment"

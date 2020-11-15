@@ -63,7 +63,7 @@ public class AddExpenseFragment extends DaggerFragment {
             public void onEvent(QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
                 List<ExpenseCategory> expenseCategories = queryDocumentSnapshots.toObjects(ExpenseCategory.class);
                 categories = queryDocumentSnapshots.getDocuments();
-                autoCompleteTextView.setAdapter(new ArrayAdapter<ExpenseCategory>(requireContext(), android.R.layout.simple_dropdown_item_1line, expenseCategories));
+                autoCompleteTextView.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, expenseCategories));
             }
         });
 

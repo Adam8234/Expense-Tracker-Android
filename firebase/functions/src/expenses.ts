@@ -1,141 +1,141 @@
 import {
   CollectionReference,
-  DocumentReference,
   DocumentSnapshot,
-  QueryDocumentSnapshot,
-  WriteResult,
+  FieldValue,
+  WriteBatch,
 } from "@google-cloud/firestore";
 import { Change, EventContext } from "firebase-functions";
+import { db } from ".";
 import {
   getCategoriesCollection,
   getMonthlyExpensesCollection,
   getRootExpensesCollection,
   getUserReference,
 } from "./references";
-
-export function handleDeleteExpense(
-  snap: DocumentSnapshot,
-  context: EventContext
-) {
-  let results: Promise<WriteResult>[] = [];
-  results.push(
-    getCategoriesCollection(context)
-      .doc(snap.data().categoryId)
-      .collection("expenses")
-      .doc(snap.id)
-      .delete()
-  );
-  results.push(
-    getMonthlyExpensesCollection(context)
-      .doc(getMonthYearKey(snap))
-      .collection("expenses")
-      .doc(snap.id)
-      .delete()
-  );
-
-  return Promise.all(results);
-}
-
 export async function handleExpenseQueue(
   snap: DocumentSnapshot,
   context: EventContext
 ) {
-  let data = snap.data();
+  let data = snap.data()!!;
 
   //Denormalize symbol
   let userSnap = await getUserReference(context).get();
-  let symbol = userSnap.data().symbol;
+  let symbol = userSnap.data()?.symbol;
   if (!symbol) {
     symbol = "$";
-    await userSnap.ref.update("symbol", "$");
+    if (!userSnap.data()) {
+      await userSnap.ref.set({ symbol: symbol });
+    } else {
+      await userSnap.ref.update("symbol", symbol);
+    }
   }
   data.symbol = symbol;
 
   const categorySnap = await getCategoriesCollection(context)
     .doc(getCategoryId(snap))
     .get();
+
   data.category = categorySnap.data();
+  data.yearMonthId = getMonthYearKey(snap);
 
   return Promise.all([
-    getRootExpensesCollection(context).add(data),
+    getRootExpensesCollection(context).doc(snap.id).set(data),
     snap.ref.delete(),
+    ,
   ]);
 }
 
 export async function handleWriteExpense(
-  change: Change<QueryDocumentSnapshot>,
+  change: Change<DocumentSnapshot>,
   context: EventContext
 ) {
-  if (!change.after.exists) {
-    return null;
-  }
-  const collections: DocumentReference[] = [];
+  const batch = db.batch();
+  const expenseRef = change.after.ref;
   const categoriesCollectionRef = getCategoriesCollection(context);
   const monthlyCollectionRef = getMonthlyExpensesCollection(context);
-  collections.push(categoriesCollectionRef.doc(getCategoryId(change.after)));
-  collections.push(monthlyCollectionRef.doc(getMonthYearKey(change.after)));
 
-  const ref = change.after.ref;
-  console.log("Denormalizing Category");
-  await denormalizeDocumentChange(
+  await updateTotalsInDoc(
     categoriesCollectionRef,
     getCategoryId(change.before),
     getCategoryId(change.after),
-    change.after,
+    change,
+    batch,
     "category"
   );
-
-  console.log("Denormalizing Month Year");
-  await denormalizeDocumentChange(
+  await updateTotalsInDoc(
     monthlyCollectionRef,
     getMonthYearKey(change.before),
     getMonthYearKey(change.after),
-    change.after,
-    null
+    change,
+    batch
   );
-
-  const docSnap = await ref.get();
-  const writeResults = collections.map((value) => {
-    return value.collection("expenses").doc(ref.id).set(docSnap.data());
-  });
-  return Promise.all(writeResults);
+  batch.update(expenseRef, { yearMonthId: getMonthYearKey(change.after) });
+  return batch.commit();
 }
 
-async function denormalizeDocumentChange(
+async function updateTotalsInDoc(
   collectionRef: CollectionReference,
-  beforeId: string,
-  afterId: string,
-  expense: DocumentSnapshot,
+  beforeId: string | undefined,
+  afterId: string | undefined,
+  change: Change<DocumentSnapshot>,
+  batch: WriteBatch,
   field?: string
 ) {
-  if (beforeId !== afterId) {
-    let afterSnap = await collectionRef.doc(afterId).get();
+  const afterAmount: number = change.after.data()?.amount;
+  const beforeAmount: number = change.before.data()?.amount;
 
-    if (beforeId) {
-      await collectionRef
-        .doc(beforeId)
-        .collection("expenses")
-        .doc(expense.id)
-        .delete();
-    }
-
+  if (!change.before.exists) {
+    //Created
+    batch.set(
+      collectionRef.doc(afterId!!),
+      {
+        totalAmount: FieldValue.increment(afterAmount),
+        totalExpenses: FieldValue.increment(1),
+      },
+      { merge: true }
+    );
+    return;
+  } else if (!change.after.exists) {
+    //Deleted
+    batch.update(collectionRef.doc(beforeId!!), {
+      totalAmount: FieldValue.increment(-beforeAmount),
+      totalExpenses: FieldValue.increment(-1),
+    });
+    return;
+  } else if (beforeId == afterId) {
+    //Update Amount
+    batch.update(collectionRef.doc(afterId!!), {
+      totalAmount: FieldValue.increment(afterAmount - beforeAmount),
+    });
+  } else {
+    //Changed ID
+    batch.update(collectionRef.doc(beforeId!!), {
+      totalAmount: FieldValue.increment(-beforeAmount),
+      totalExpenses: FieldValue.increment(-1),
+    });
+    batch.set(
+      collectionRef.doc(afterId!!),
+      {
+        totalAmount: FieldValue.increment(afterAmount),
+        totalExpenses: FieldValue.increment(1),
+      },
+      { merge: true }
+    );
     if (field) {
-      await expense.ref.update(field, afterSnap.data());
+      const afterData = await collectionRef.doc(afterId!!).get();
+      batch.update(change.after.ref, field, afterData.data());
     }
   }
 }
 
-function getMonthYearKey(snap: DocumentSnapshot) {
-  if (!snap || !snap.data()) {
-    return null;
+function getMonthYearKey(snap?: DocumentSnapshot) {
+  const date = snap?.data()?.date.toDate();
+  if (date) {
+    return date.getFullYear() + "-" + (date.getMonth() + 1);
   }
-  const date = snap.data().date.toDate();
-  return date.getFullYear() + "-" + date.getMonth();
+  return undefined;
 }
 
-function getCategoryId(snap: DocumentSnapshot) {
-  if (!snap || !snap.data()) {
-    return null;
-  }
-  return snap.data().categoryId;
+function getCategoryId(snap?: DocumentSnapshot) {
+  return snap?.data()?.categoryId;
 }
