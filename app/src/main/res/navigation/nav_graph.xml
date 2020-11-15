@@ -31,17 +31,13 @@
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     <fragment
-        android:id="@+id/expenseSummaryFragment"
-        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseSummaryFragment"
-        android:label="Monthly Expenses">
-        <action
-            android:id="@+id/action_expenseSummaryFragment_to_editExpenseFragment"
-            app:destination="@id/editExpenseFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/expenseCategoriesFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoriesFragment"
-        android:label="Categories" />
+        android:label="Categories" >
+        <action
+            android:id="@+id/action_expenseCategoriesFragment_to_expenseCategoryMonthlySummaryFragment"
+            app:destination="@id/expenseCategoryMonthlySummaryFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addExpenseFragment"
         android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.AddExpenseFragment"
@@ -57,5 +53,24 @@
         <argument
             android:name="expense_id"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenseMonthlySummaryFragment"
+        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseMonthlySummaryFragment"
+        android:label="Monthly Expenses">
+        <action
+            android:id="@+id/action_expenseMonthlySummaryFragment_to_editExpenseFragment"
+            app:destination="@id/editExpenseFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/expenseCategoryMonthlySummaryFragment"
+        android:name="edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoryMonthlySummaryFragment"
+        android:label="Category Expenses">
+        <argument
+            android:name="categoryId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_expenseCategoryMonthlySummaryFragment_to_editExpenseFragment"
+            app:destination="@id/editExpenseFragment" />
     </fragment>
 </navigation>

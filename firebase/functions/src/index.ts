@@ -1,8 +1,13 @@
 import functions = require("firebase-functions");
 import admin = require("firebase-admin");
-import { handleDeleteCategory, handleWriteCategory } from "./categories";
+import {
+  handleDeleteCategory,
+  handleMonthlyCategoryWrite,
+  handleWriteCategory,
+} from "./categories";
 import { handleUserWrite } from "./users";
 import { handleExpenseQueue, handleWriteExpense } from "./expenses";
+import { handleMonthlyExpenseWrite } from "./monthly";
 
 admin.initializeApp(functions.config().firebase);
 
@@ -28,3 +33,13 @@ exports.writeCategory = functions.firestore
 exports.deleteCategory = functions.firestore
   .document("users/{userId}/categories/{categoryId}")
   .onDelete(handleDeleteCategory);
+
+exports.writeMonthlyCategory = functions.firestore
+  .document(
+    "users/{userId}/monthly_expenses/{yearMonthId}/monthly_categories/{categoryId}"
+  )
+  .onWrite(handleMonthlyCategoryWrite);
+
+exports.writeMonthlyExpense = functions.firestore
+  .document("users/{userId}/monthly_expenses/{yearMonthId}")
+  .onWrite(handleMonthlyExpenseWrite);

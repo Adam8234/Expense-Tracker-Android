@@ -10,6 +10,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,11 +67,19 @@ public class ExpenseCategoriesFragment extends DaggerFragment implements View.On
 
             @Override
             protected void onBindViewHolder(@NonNull ExpenseCategoryHolder holder, final int position, @NonNull ExpenseCategory model) {
+
+                final String id = getSnapshots().getSnapshot(position).getId();
                 holder.updateView(model);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        NavDirections action = ExpenseCategoriesFragmentDirections.actionExpenseCategoriesFragmentToExpenseCategoryMonthlySummaryFragment(id);
+                        NavHostFragment.findNavController(ExpenseCategoriesFragment.this).navigate(action);
+                    }
+                });
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        String id = getSnapshots().getSnapshot(position).getId();
                         expenseCategoryViewModel.deleteCategory(id);
                         return false;
                     }

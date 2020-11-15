@@ -44,7 +44,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         Set<Integer> topLevelDestinations = new HashSet<>();
         topLevelDestinations.add(R.id.expenseListFragment);
         topLevelDestinations.add(R.id.expenseCategoriesFragment);
-        topLevelDestinations.add(R.id.expenseSummaryFragment);
+        topLevelDestinations.add(R.id.expenseMonthlySummaryFragment);
         topLevelDestinations.add(R.id.settingsFragment);
         appBarConfiguration =
                 new AppBarConfiguration.Builder(topLevelDestinations).build();

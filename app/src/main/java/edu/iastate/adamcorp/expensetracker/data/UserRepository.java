@@ -1,13 +1,17 @@
 package edu.iastate.adamcorp.expensetracker.data;
 
+import android.util.Log;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,12 +24,20 @@ public class UserRepository {
     private FirebaseFirestore firebaseFirestore;
     private AuthenticationService authenticationService;
     private FirebaseAuth firebaseAuth;
+    private static final String TAG = "UserRepository";
 
     @Inject
     public UserRepository(FirebaseFirestore firebaseFirestore, AuthenticationService authenticationService) {
         this.firebaseFirestore = firebaseFirestore;
         this.authenticationService = authenticationService;
         this.firebaseAuth = firebaseAuth;
+        firebaseFirestore.collectionGroup("monthly_categories").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                Log.d(TAG, "onSuccess() called with: queryDocumentSnapshots = [" + queryDocumentSnapshots + "]");
+            }
+        });
     }
 
     public DocumentReference getUserDocument() {

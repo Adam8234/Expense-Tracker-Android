@@ -6,7 +6,7 @@
         android:title="Expenses" />
     <item
         android:icon="@drawable/ic_baseline_calendar_today_24"
-        android:id="@+id/expenseSummaryFragment"
+        android:id="@+id/expenseMonthlySummaryFragment"
         android:title="Monthly" />
     <item
         android:icon="@drawable/ic_baseline_shopping_cart_24"

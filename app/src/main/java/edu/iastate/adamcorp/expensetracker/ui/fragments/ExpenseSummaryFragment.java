@@ -1,6 +1,5 @@
 package edu.iastate.adamcorp.expensetracker.ui.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,20 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -41,11 +34,9 @@ import edu.iastate.adamcorp.expensetracker.data.CategoriesRepository;
 import edu.iastate.adamcorp.expensetracker.data.ExpensesRepository;
 import edu.iastate.adamcorp.expensetracker.data.MonthlyExpensesRepository;
 import edu.iastate.adamcorp.expensetracker.data.models.Expense;
-import edu.iastate.adamcorp.expensetracker.data.models.ExpenseCategory;
-import edu.iastate.adamcorp.expensetracker.data.models.MonthlyExpense;
 import edu.iastate.adamcorp.expensetracker.ui.viewholders.ExpenseViewHolder;
 
-public class ExpenseSummaryFragment extends DaggerFragment {
+public abstract class ExpenseSummaryFragment extends DaggerFragment {
     @Inject
     CategoriesRepository categoriesRepository;
 
@@ -71,7 +62,6 @@ public class ExpenseSummaryFragment extends DaggerFragment {
         final Spinner spinner = view.findViewById(R.id.month_spinner);
         recyclerView = view.findViewById(R.id.recycler_view);
 
-
         LinearLayoutManager manager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(manager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -94,7 +84,7 @@ public class ExpenseSummaryFragment extends DaggerFragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
                 ArrayAdapter<String> adapter = (ArrayAdapter<String>) adapterView.getAdapter();
-                setQuery(adapter.getItem(pos));
+                onYearMonthSelected(adapter.getItem(pos));
             }
 
             @Override
@@ -104,12 +94,16 @@ public class ExpenseSummaryFragment extends DaggerFragment {
         });
     }
 
-    public void setQuery(String yearMonthId) {
+    public abstract Query getQuery(String yearMonthId);
+    public abstract void onExpenseClick(String expenseId);
+
+    public void onYearMonthSelected(String yearMonthId) {
         if (yearMonthId == null) {
             return;
         }
+        Query query = getQuery(yearMonthId);
         FirestoreRecyclerOptions<Expense> options = new FirestoreRecyclerOptions.Builder<Expense>()
-                .setQuery(expensesRepository.getExpenses().whereEqualTo("yearMonthId", yearMonthId), Expense.class)
+                .setQuery(query, Expense.class)
                 .setLifecycleOwner(this)
                 .build();
         if (adapter == null) {
@@ -128,8 +122,7 @@ public class ExpenseSummaryFragment extends DaggerFragment {
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ExpenseSummaryFragmentDirections.ActionExpenseSummaryFragmentToEditExpenseFragment action = ExpenseSummaryFragmentDirections.actionExpenseSummaryFragmentToEditExpenseFragment(id);
-                            NavHostFragment.findNavController(ExpenseSummaryFragment.this).navigate(action);
+                            onExpenseClick(id);
                         }
                     });
                     holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -148,6 +141,7 @@ public class ExpenseSummaryFragment extends DaggerFragment {
             recyclerView.setAdapter(adapter);
         }
     }
+
 
     @Override
     public void onStop() {

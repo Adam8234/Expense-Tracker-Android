@@ -1,5 +1,6 @@
 import {
   CollectionReference,
+  DocumentReference,
   DocumentSnapshot,
   FieldValue,
   WriteBatch,
@@ -54,7 +55,7 @@ export async function handleWriteExpense(
   const categoriesCollectionRef = getCategoriesCollection(context);
   const monthlyCollectionRef = getMonthlyExpensesCollection(context);
 
-  await updateTotalsInDoc(
+  await updateTotalsInDocCollection(
     categoriesCollectionRef,
     getCategoryId(change.before),
     getCategoryId(change.after),
@@ -62,21 +63,55 @@ export async function handleWriteExpense(
     batch,
     "category"
   );
-  await updateTotalsInDoc(
+  await updateTotalsInDocCollection(
     monthlyCollectionRef,
     getMonthYearKey(change.before),
     getMonthYearKey(change.after),
     change,
     batch
   );
-  batch.update(expenseRef, { yearMonthId: getMonthYearKey(change.after) });
+
+  await updateTotalsInDoc(
+    monthlyCollectionRef
+      .doc(getMonthYearKey(change.before))
+      .collection("monthly_categories")
+      .doc(getCategoryId(change.before)),
+    monthlyCollectionRef
+      .doc(getMonthYearKey(change.after))
+      .collection("monthly_categories")
+      .doc(getCategoryId(change.after)),
+    change,
+    batch,
+    undefined
+  );
+
+  if (change.after.exists) {
+    batch.update(expenseRef, { yearMonthId: getMonthYearKey(change.after) });
+  }
+
   return batch.commit();
 }
 
-async function updateTotalsInDoc(
+async function updateTotalsInDocCollection(
   collectionRef: CollectionReference,
-  beforeId: string | undefined,
-  afterId: string | undefined,
+  beforeId: string,
+  afterId: string,
+  change: Change<DocumentSnapshot>,
+  batch: WriteBatch,
+  field?: string
+) {
+  return await updateTotalsInDoc(
+    collectionRef.doc(beforeId),
+    collectionRef.doc(afterId),
+    change,
+    batch,
+    field
+  );
+}
+
+async function updateTotalsInDoc(
+  beforeRef: DocumentReference,
+  afterRef: DocumentReference,
   change: Change<DocumentSnapshot>,
   batch: WriteBatch,
   field?: string
@@ -87,7 +122,7 @@ async function updateTotalsInDoc(
   if (!change.before.exists) {
     //Created
     batch.set(
-      collectionRef.doc(afterId!!),
+      afterRef,
       {
         totalAmount: FieldValue.increment(afterAmount),
         totalExpenses: FieldValue.increment(1),
@@ -97,45 +132,63 @@ async function updateTotalsInDoc(
     return;
   } else if (!change.after.exists) {
     //Deleted
-    batch.update(collectionRef.doc(beforeId!!), {
-      totalAmount: FieldValue.increment(-beforeAmount),
-      totalExpenses: FieldValue.increment(-1),
-    });
+    if ((await beforeRef.get()).exists) {
+      batch.set(
+        beforeRef,
+        {
+          totalAmount: FieldValue.increment(-beforeAmount),
+          totalExpenses: FieldValue.increment(-1),
+        },
+        { merge: true }
+      );
+    }
     return;
-  } else if (beforeId == afterId) {
+  } else if (beforeRef.isEqual(afterRef)) {
     //Update Amount
-    batch.update(collectionRef.doc(afterId!!), {
-      totalAmount: FieldValue.increment(afterAmount - beforeAmount),
-    });
+    batch.set(
+      afterRef,
+      {
+        totalAmount: FieldValue.increment(afterAmount - beforeAmount),
+      },
+      { merge: true }
+    );
   } else {
     //Changed ID
-    batch.update(collectionRef.doc(beforeId!!), {
-      totalAmount: FieldValue.increment(-beforeAmount),
-      totalExpenses: FieldValue.increment(-1),
-    });
     batch.set(
-      collectionRef.doc(afterId!!),
+      beforeRef,
+      {
+        totalAmount: FieldValue.increment(-beforeAmount),
+        totalExpenses: FieldValue.increment(-1),
+      },
+      { merge: true }
+    );
+    batch.set(
+      afterRef,
       {
         totalAmount: FieldValue.increment(afterAmount),
         totalExpenses: FieldValue.increment(1),
       },
       { merge: true }
     );
-    if (field) {
-      const afterData = await collectionRef.doc(afterId!!).get();
-      batch.update(change.after.ref, field, afterData.data());
-    }
+  }
+  if (field && change.after.exists) {
+    const afterData = await afterRef.get();
+    batch.update(change.after.ref, field, afterData.data());
   }
 }
 
-function getMonthYearKey(snap?: DocumentSnapshot) {
+function getMonthYearKey(snap?: DocumentSnapshot): string {
   const date = snap?.data()?.date.toDate();
   if (date) {
     return date.getFullYear() + "-" + (date.getMonth() + 1);
   }
-  return undefined;
+  return "none";
 }
 
-function getCategoryId(snap?: DocumentSnapshot) {
-  return snap?.data()?.categoryId;
+function getCategoryId(snap?: DocumentSnapshot): string {
+  const categoryId = snap?.data()?.categoryId;
+  if (!categoryId) {
+    return "none";
+  }
+  return categoryId;
 }
