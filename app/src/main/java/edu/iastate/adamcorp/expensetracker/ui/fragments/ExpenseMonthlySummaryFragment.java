@@ -1,14 +1,21 @@
 package edu.iastate.adamcorp.expensetracker.ui.fragments;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -39,6 +46,15 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
     private ListenerRegistration monthlyExpenseRegistration;
 
     private TextView totalTextView;
+    private ProgressBar progressBar;
+    private TextView minExpense;
+    private TextView maxExpense;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -47,10 +63,31 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_summary_monthly_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.toggle_graph_menu) {
+            if(pieChart.getVisibility() == View.VISIBLE) {
+                pieChart.setVisibility(View.GONE);
+            } else {
+                pieChart.setVisibility(View.VISIBLE);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.pieChart = view.findViewById(R.id.chart);
         totalTextView = view.findViewById(R.id.total_text_view);
+        progressBar = view.findViewById(R.id.progress_bar);
+        maxExpense = view.findViewById(R.id.max_expense);
+        minExpense = view.findViewById(R.id.min_expense);
     }
 
     @Override
@@ -61,14 +98,33 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
     @Override
     public void onYearMonthSelected(String yearMonthId) {
         super.onYearMonthSelected(yearMonthId);
-        if(monthlyExpenseRegistration != null) {
+        if (monthlyExpenseRegistration != null) {
             monthlyExpenseRegistration.remove();
         }
         monthlyExpenseRegistration = monthlyExpensesRepository.getMonthlyExpenses().document(yearMonthId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 MonthlyExpense monthlyExpense = value.toObject(MonthlyExpense.class);
+                if(monthlyExpense == null || monthlyExpense.getMonthlyBudget() == null || monthlyExpense.getSymbol() == null) {
+                    return;
+                }
                 totalTextView.setText(String.format("%s%.2f", monthlyExpense.getSymbol(), monthlyExpense.getTotalAmount()));
+
+                minExpense.setText(String.format("%s0", monthlyExpense.getSymbol()));
+                maxExpense.setText(String.format("%s%.2f", monthlyExpense.getSymbol(), monthlyExpense.getMonthlyBudget()));
+
+                progressBar.setMax(1000);
+                int progressValue = (int) ((monthlyExpense.getTotalAmount() / monthlyExpense.getMonthlyBudget()) * 1000);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    progressBar.setProgress(progressValue, true);
+                } else {
+                    progressBar.setProgress(progressValue);
+                }
+                if(monthlyExpense.getTotalAmount() > monthlyExpense.getMonthlyBudget()) {
+                    DrawableCompat.setTint(progressBar.getProgressDrawable(),getResources().getColor(android.R.color.holo_red_dark) );
+                } else {
+                    DrawableCompat.setTint(progressBar.getProgressDrawable(),getResources().getColor(R.color.colorAccent) );
+                }
             }
         });
         if (graphRegistration != null) {
@@ -108,7 +164,7 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
         if (graphRegistration != null) {
             graphRegistration.remove();
         }
-        if(monthlyExpenseRegistration != null) {
+        if (monthlyExpenseRegistration != null) {
             monthlyExpenseRegistration.remove();
         }
     }

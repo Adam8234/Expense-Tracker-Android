@@ -149,6 +149,7 @@ public abstract class ExpenseSummaryFragment extends DaggerFragment {
         } else {
             adapter.updateOptions(options);
             recyclerView.setAdapter(adapter);
+            adapter.startListening();
         }
     }
 

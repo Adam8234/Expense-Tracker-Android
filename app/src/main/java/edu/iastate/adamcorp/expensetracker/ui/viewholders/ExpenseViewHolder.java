@@ -31,6 +31,6 @@ public class ExpenseViewHolder extends RecyclerView.ViewHolder {
         mExpenseNameTextView.setText(expense.getName());
         CharSequence relativeTimeSpanString = DateUtils.getRelativeTimeSpanString(expense.getDate().toDate().getTime(), new Date().getTime(), DateUtils.DAY_IN_MILLIS);
         mExpenseCategoryTextView.setText(String.format("%s - %s", expense.getCategory(), relativeTimeSpanString));
-        mExpenseAmountTextView.setText(String.format("%s%s", expense.getSymbol(), numberFormat.format(expense.getAmount())));
+        mExpenseAmountTextView.setText(String.format("-%s%s", expense.getSymbol(), numberFormat.format(expense.getAmount())));
     }
 }
