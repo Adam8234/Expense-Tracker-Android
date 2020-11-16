@@ -25,6 +25,7 @@ import dagger.android.HasAndroidInjector;
 import dagger.android.support.AndroidSupportInjection;
 import edu.iastate.adamcorp.expensetracker.R;
 import edu.iastate.adamcorp.expensetracker.data.UserRepository;
+import edu.iastate.adamcorp.expensetracker.data.models.User;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements HasAndroidInjector, Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
     @Inject
@@ -54,8 +55,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
         userRepository.getUserDocument().addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                String symbol = (String) value.get("symbol");
-                Double budget = (Double) value.get("monthlyBudget");
+                User user = value.toObject(User.class);
+                String symbol = user.getSymbol();
+                Double budget = user.getMonthlyBudget();
                 if(symbol == null) {
                     symbol = "$";
                     userRepository.changeCurrencySymbol(symbol);
@@ -91,7 +93,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
             userRepository.changeCurrencySymbol((String) newValue);
             return true;
         } else if(preference.getKey().equals("monthly_budget")) {
-            userRepository.changeMonthlyBudget((Double) newValue);
+            userRepository.changeMonthlyBudget(Double.parseDouble((String) newValue));
         }
         return false;
     }

@@ -19,12 +19,17 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -72,8 +77,12 @@ public abstract class ExpenseSummaryFragment extends DaggerFragment {
             @Override
             public void onEvent(QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
                 ArrayList<String> yearMonthKeys = new ArrayList<>();
-                for (DocumentSnapshot monthlyExpenseSnapshot : queryDocumentSnapshots.getDocuments()) {
-                    yearMonthKeys.add(monthlyExpenseSnapshot.getId());
+                if (queryDocumentSnapshots != null) {
+                    List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                    Collections.reverse(documents);
+                    for (DocumentSnapshot monthlyExpenseSnapshot : documents) {
+                        yearMonthKeys.add(monthlyExpenseSnapshot.getId());
+                    }
                 }
                 spinner.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, yearMonthKeys));
                 spinner.setSelection(0);
@@ -95,6 +104,7 @@ public abstract class ExpenseSummaryFragment extends DaggerFragment {
     }
 
     public abstract Query getQuery(String yearMonthId);
+
     public abstract void onExpenseClick(String expenseId);
 
     public void onYearMonthSelected(String yearMonthId) {

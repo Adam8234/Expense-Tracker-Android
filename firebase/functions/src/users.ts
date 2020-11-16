@@ -1,6 +1,7 @@
 import { DocumentSnapshot } from "@google-cloud/firestore";
 import { Change, EventContext } from "firebase-functions";
 import { db } from ".";
+import { getMonthlyExpensesCollection } from "./references";
 
 export async function handleUserWrite(
   change: Change<DocumentSnapshot>,
@@ -20,6 +21,16 @@ export async function handleUserWrite(
   // Update denormalized data for symbol
   for (var ref of expensesRefs) {
     batch.update(ref, "symbol", symbol);
+  }
+
+  let monthlyRefs = await getMonthlyExpensesCollection(context).listDocuments();
+  for (var monthlyRef of monthlyRefs) {
+    batch.update(monthlyRef, "symbol", symbol);
+    batch.update(
+      monthlyRef,
+      "monthlyBudget",
+      change.after.data()?.monthlyBudget
+    );
   }
 
   return batch.commit();

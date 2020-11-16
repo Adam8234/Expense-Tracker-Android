@@ -2,16 +2,16 @@ package edu.iastate.adamcorp.expensetracker.data.models;
 
 public class ExpenseCategory {
     private String name;
-    private int numOfExpenses;
-    private double totalExpenses;
+    private int totalExpenses;
+    private double totalAmount;
 
     public ExpenseCategory() {
     }
 
-    public ExpenseCategory(String name, int numOfExpenses, double totalExpenses) {
+    public ExpenseCategory(String name, int numOfExpenses, double totalAmount) {
         this.name = name;
-        this.numOfExpenses = numOfExpenses;
-        this.totalExpenses = totalExpenses;
+        this.totalExpenses = numOfExpenses;
+        this.totalAmount = totalAmount;
     }
 
 
@@ -32,19 +32,19 @@ public class ExpenseCategory {
         return name;
     }
 
-    public int getNumOfExpenses() {
-        return numOfExpenses;
-    }
-
-    public void setNumOfExpenses(int numOfExpenses) {
-        this.numOfExpenses = numOfExpenses;
-    }
-
-    public double getTotalExpenses() {
+    public int getTotalExpenses() {
         return totalExpenses;
     }
 
-    public void setTotalExpenses(double totalExpenses) {
+    public void setTotalExpenses(int totalExpenses) {
         this.totalExpenses = totalExpenses;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }
