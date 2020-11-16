@@ -12,7 +12,9 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +24,7 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerAppCompatActivity;
 import edu.iastate.adamcorp.expensetracker.R;
 import edu.iastate.adamcorp.expensetracker.data.ExpensesRepository;
+import edu.iastate.adamcorp.expensetracker.data.UserRepository;
 
 public class MainActivity extends DaggerAppCompatActivity {
     private BottomNavigationView mNavBottomView;
@@ -29,6 +32,13 @@ public class MainActivity extends DaggerAppCompatActivity {
     private NavController mNavController;
     @Inject
     ExpensesRepository expensesRepository;
+
+    @Inject
+    FirebaseMessaging firebaseMessaging;
+
+    @Inject
+    UserRepository userRepository;
+
     private AppBarConfiguration appBarConfiguration;
 
     @Override
@@ -51,6 +61,13 @@ public class MainActivity extends DaggerAppCompatActivity {
 
         NavigationUI.setupWithNavController(mNavBottomView, mNavController);
         NavigationUI.setupActionBarWithNavController(this, mNavController, appBarConfiguration);
+
+        firebaseMessaging.getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                userRepository.updateFCMToken(s);
+            }
+        });
     }
 
 

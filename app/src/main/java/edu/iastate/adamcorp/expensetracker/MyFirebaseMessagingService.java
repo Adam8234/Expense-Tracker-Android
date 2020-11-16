@@ -5,9 +5,11 @@ import android.app.NotificationManager;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
 import javax.inject.Inject;
 
@@ -28,17 +30,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService impleme
     public void onCreate() {
         super.onCreate();
         AndroidInjection.inject(this);
-
     }
 
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
         userRepository.updateFCMToken(s);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("bill_notifications", "Bill Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-            getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        }
     }
 
     @Override

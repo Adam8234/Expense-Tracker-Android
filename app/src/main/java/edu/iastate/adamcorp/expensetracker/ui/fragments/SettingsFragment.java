@@ -50,6 +50,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
         //expense_categories.setOnPreferenceClickListener(this);
         currency_symbol.setOnPreferenceChangeListener(this);
         monthly_budget.setOnPreferenceChangeListener(this);
+        bill_reminder.setOnPreferenceChangeListener(this);
 
         userRepository.getUserDocument().addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override

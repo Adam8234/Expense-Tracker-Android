@@ -64,7 +64,7 @@ exports.billReminder = functions.pubsub
         await admin.messaging().sendToDevice(token, {
           notification: {
             title: "Bill Reminder",
-            body: "Your bills are due soon. Add your bill expenses to the app.",
+            body: "Your bills are due soon. Add your expenses to the app.",
           },
         });
         await userSnapshot.ref.update({ lastSent: Timestamp.now() });
