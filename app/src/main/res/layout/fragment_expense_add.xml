@@ -42,6 +42,24 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout_date"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_input_layout_category">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/date_edit_text"
+            android:layout_width="match_parent"
+            android:focusableInTouchMode="false"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_amount"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
@@ -50,14 +68,14 @@
         android:hint="Amount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_input_layout_category"
+        app:layout_constraintTop_toBottomOf="@+id/text_input_layout_date"
         app:prefixText="$">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/amount_edit_text"
             android:layout_width="match_parent"
-            android:inputType="numberDecimal"
             android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
             tools:text="250" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,7 +84,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:width="0dp"
-        android:text="Update Expense"
+        android:text="Add Expense"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

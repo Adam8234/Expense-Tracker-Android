@@ -49,6 +49,10 @@ public class ExpensesRepository implements FirebaseAuth.AuthStateListener {
         return getExpense(id).set(expense);
     }
 
+    public Task<Void> deleteExpense(String id) {
+        return getExpense(id).delete();
+    }
+
     public DocumentReference addExpense(ExpenseQueue expense) {
         DocumentReference doc = getExpenseQueue().document();
         doc.set(expense);

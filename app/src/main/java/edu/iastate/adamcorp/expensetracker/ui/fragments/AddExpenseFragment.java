@@ -1,6 +1,8 @@
 package edu.iastate.adamcorp.expensetracker.ui.fragments;
 
 import android.os.Bundle;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,6 +28,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -44,6 +52,8 @@ public class AddExpenseFragment extends DaggerFragment {
     private List<DocumentSnapshot> categories;
     private ListenerRegistration categoriesListenerRegistration;
     private int itemSelected = ListView.INVALID_POSITION;
+    private Timestamp currentTimestamp = Timestamp.now();
+    private EditText dateEditText;
 
     @Nullable
     @Override
@@ -58,6 +68,16 @@ public class AddExpenseFragment extends DaggerFragment {
         final Button addExpenseButton = view.findViewById(R.id.add_expense_button);
         final EditText amountEditText = view.findViewById(R.id.amount_edit_text);
         final EditText nameEditText = view.findViewById(R.id.name_edit_text);
+        dateEditText = view.findViewById(R.id.date_edit_text);
+
+        dateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                showDatePicker(currentTimestamp);
+            }
+        });
+
         categoriesListenerRegistration = categoriesRepository.getCategories().addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
@@ -78,7 +98,7 @@ public class AddExpenseFragment extends DaggerFragment {
             @Override
             public void onClick(View view) {
                 int selection = itemSelected;
-                final ExpenseQueue expenseQueue = new ExpenseQueue(nameEditText.getText().toString(), "", Double.parseDouble(amountEditText.getText().toString()), Timestamp.now());
+                final ExpenseQueue expenseQueue = new ExpenseQueue(nameEditText.getText().toString(), "", Double.parseDouble(amountEditText.getText().toString()), currentTimestamp);
 
                 if (selection == ListView.INVALID_POSITION) {
                     //Add Category
@@ -99,6 +119,28 @@ public class AddExpenseFragment extends DaggerFragment {
 
             }
         });
+
+        updateExpenseTimestamp(currentTimestamp);
+    }
+
+    public void showDatePicker(Timestamp timestamp) {
+        MaterialDatePicker.Builder<Long> longBuilder = MaterialDatePicker.Builder.datePicker();
+        longBuilder.setSelection(timestamp.toDate().getTime());
+        MaterialDatePicker<Long> picker = longBuilder.build();
+        picker.show(getChildFragmentManager(), "date_picker");
+        picker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+            @Override
+            public void onPositiveButtonClick(Long selection) {
+                LocalDateTime now = LocalDateTime.now();
+                ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(now);
+                updateExpenseTimestamp(new Timestamp(new Date(selection - offset.getTotalSeconds() * DateUtils.SECOND_IN_MILLIS)));
+            }
+        });
+    }
+
+    private void updateExpenseTimestamp(Timestamp timestamp) {
+        currentTimestamp = timestamp;
+        dateEditText.setText(DateFormat.format("MM/dd/yyyy", timestamp.toDate().getTime()));
     }
 
     @Override

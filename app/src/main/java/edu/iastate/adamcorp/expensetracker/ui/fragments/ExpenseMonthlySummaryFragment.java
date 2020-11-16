@@ -76,6 +76,7 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
             } else {
                 pieChart.setVisibility(View.VISIBLE);
             }
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
