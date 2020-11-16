@@ -2,6 +2,8 @@ package edu.iastate.adamcorp.expensetracker.data;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -9,6 +11,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,15 +30,18 @@ public class UserRepository {
     private static final String TAG = "UserRepository";
 
     @Inject
-    public UserRepository(FirebaseFirestore firebaseFirestore, AuthenticationService authenticationService) {
+    public UserRepository(FirebaseFirestore firebaseFirestore, AuthenticationService authenticationService, FirebaseAuth firebaseAuth, FirebaseMessaging firebaseMessaging) {
         this.firebaseFirestore = firebaseFirestore;
         this.authenticationService = authenticationService;
         this.firebaseAuth = firebaseAuth;
-        firebaseFirestore.collectionGroup("monthly_categories").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                Log.d(TAG, "onSuccess() called with: queryDocumentSnapshots = [" + queryDocumentSnapshots + "]");
+        firebaseAuth.addAuthStateListener(auth -> {
+            if(firebaseAuth.getUid() != null) {
+                firebaseMessaging.getToken().addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        updateFCMToken(s);
+                    }
+                });
             }
         });
     }
@@ -54,6 +60,20 @@ public class UserRepository {
     public void changeMonthlyBudget(Double budget) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("monthlyBudget", budget);
+        getUserDocument().set(map, SetOptions.merge());
+    }
+    public void changeDayReminder(Integer budget) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("dayReminder", budget);
+        getUserDocument().set(map, SetOptions.merge());
+    }
+
+    public void updateFCMToken(String s) {
+        if (!authenticationService.isAuthenticated()) {
+            return;
+        }
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("fcmToken", s);
         getUserDocument().set(map, SetOptions.merge());
     }
 }

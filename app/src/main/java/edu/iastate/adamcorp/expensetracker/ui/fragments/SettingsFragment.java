@@ -1,7 +1,6 @@
 package edu.iastate.adamcorp.expensetracker.ui.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -47,6 +45,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
         //Preference expense_categories = findPreference("expense_categories");
         final EditTextPreference currency_symbol = findPreference("currency_symbol");
         final EditTextPreference monthly_budget = findPreference("monthly_budget");
+        final EditTextPreference bill_reminder = findPreference("bill_reminder");
 
         //expense_categories.setOnPreferenceClickListener(this);
         currency_symbol.setOnPreferenceChangeListener(this);
@@ -58,16 +57,22 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
                 User user = value.toObject(User.class);
                 String symbol = user.getSymbol();
                 Double budget = user.getMonthlyBudget();
-                if(symbol == null) {
+                Integer dayReminder = user.getDayReminder();
+                if (symbol == null) {
                     symbol = "$";
                     userRepository.changeCurrencySymbol(symbol);
                 }
-                if(budget == null) {
+                if (budget == null) {
                     budget = -1.0;
-                    userRepository.changeMonthlyBudget(-1.0);
+                    userRepository.changeMonthlyBudget(budget);
+                }
+                if (dayReminder == null) {
+                    dayReminder = -1;
+                    userRepository.changeDayReminder(dayReminder);
                 }
                 monthly_budget.setText(budget.toString());
                 currency_symbol.setText(symbol);
+                bill_reminder.setText(dayReminder.toString());
             }
         });
     }
@@ -92,8 +97,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements HasAnd
         if (preference.getKey().equals("currency_symbol")) {
             userRepository.changeCurrencySymbol((String) newValue);
             return true;
-        } else if(preference.getKey().equals("monthly_budget")) {
+        } else if (preference.getKey().equals("monthly_budget")) {
             userRepository.changeMonthlyBudget(Double.parseDouble((String) newValue));
+        } else if (preference.getKey().equals("bill_reminder")) {
+            userRepository.changeDayReminder(Integer.parseInt((String) newValue));
         }
         return false;
     }

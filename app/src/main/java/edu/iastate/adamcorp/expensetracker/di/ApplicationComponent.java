@@ -13,12 +13,14 @@ import edu.iastate.adamcorp.expensetracker.ExpenseTrackerApp;
 import edu.iastate.adamcorp.expensetracker.di.modules.ActivityBindingModule;
 import edu.iastate.adamcorp.expensetracker.di.modules.ApplicationModule;
 import edu.iastate.adamcorp.expensetracker.di.modules.ContextModule;
+import edu.iastate.adamcorp.expensetracker.di.modules.ServiceBindingModule;
 
 @Singleton
 @Component(modules = {
         AndroidSupportInjectionModule.class,
         ContextModule.class,
         ActivityBindingModule.class,
+        ServiceBindingModule.class,
         ApplicationModule.class
 })
 public interface ApplicationComponent extends AndroidInjector<DaggerApplication> {

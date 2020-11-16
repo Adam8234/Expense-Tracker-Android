@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Expense Tracker</string>
+    <string name="default_notification_channel_id">bill_notifications</string>
 </resources>

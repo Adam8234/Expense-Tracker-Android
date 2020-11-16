@@ -2,14 +2,16 @@ package edu.iastate.adamcorp.expensetracker.data.models;
 
 public class User {
     private String symbol;
-    private double monthlyBudget;
+    private Double monthlyBudget;
+    private Integer dayReminder;
 
     public User() {
     }
 
-    public User(String currencySymbol, double monthlyBudget) {
+    public User(String currencySymbol, Double monthlyBudget, Integer dayReminder) {
         this.symbol = currencySymbol;
         this.monthlyBudget = monthlyBudget;
+        this.dayReminder = dayReminder;
     }
 
     public String getSymbol() {
@@ -20,11 +22,19 @@ public class User {
         this.symbol = symbol;
     }
 
-    public double getMonthlyBudget() {
+    public Double getMonthlyBudget() {
         return monthlyBudget;
     }
 
-    public void setMonthlyBudget(double monthlyBudget) {
+    public void setMonthlyBudget(Double monthlyBudget) {
         this.monthlyBudget = monthlyBudget;
+    }
+
+    public Integer getDayReminder() {
+        return dayReminder;
+    }
+
+    public void setDayReminder(Integer dayReminder) {
+        this.dayReminder = dayReminder;
     }
 }

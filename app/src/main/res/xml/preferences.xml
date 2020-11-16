@@ -11,10 +11,16 @@
             android:title="Currency Symbol" />
 
         <EditTextPreference
-            android:key="monthly_budget"
             android:inputType="numberDecimal"
+            android:key="monthly_budget"
             android:summary="Set monthly budget and get warning when you are close to your monthly budget. Set to -1 to set no budget."
             android:title="Monthly Budget" />
+
+        <EditTextPreference
+            android:inputType="numberDecimal"
+            android:key="bill_reminder"
+            android:summary="Have us send you a notification when your bills are due. Set the day of the month to be reminded. -1 to ignore."
+            android:title="Bill Reminder" />
 
         <!--<Preference
             android:key="expense_categories"

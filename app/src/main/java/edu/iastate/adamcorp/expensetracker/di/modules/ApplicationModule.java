@@ -3,6 +3,7 @@ package edu.iastate.adamcorp.expensetracker.di.modules;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import javax.inject.Singleton;
 
@@ -27,5 +28,11 @@ public abstract class ApplicationModule {
     @Provides
     static FirebaseApp firebaseApp() {
         return FirebaseApp.getInstance();
+    }
+
+    @Singleton
+    @Provides
+    static FirebaseMessaging firebaseMessaging() {
+        return FirebaseMessaging.getInstance();
     }
 }
