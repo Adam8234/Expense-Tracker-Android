@@ -10,6 +10,7 @@ export async function handleMonthlyExpenseWrite(
     //Create
     const userSnap = await getUserReference(context).get();
     return change.after.ref.update({
+      yearMonthId: change.after.id,
       monthlyBudget: userSnap.data()?.monthlyBudget,
       symbol: userSnap.data()?.symbol,
     });

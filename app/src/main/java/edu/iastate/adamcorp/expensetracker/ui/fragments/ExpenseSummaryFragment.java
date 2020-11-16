@@ -73,13 +73,12 @@ public abstract class ExpenseSummaryFragment extends DaggerFragment {
                 manager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        monthlyExpensesListenerRegistration = monthlyExpensesRepository.getMonthlyExpenses().addSnapshotListener(new EventListener<QuerySnapshot>() {
+        monthlyExpensesListenerRegistration = monthlyExpensesRepository.getMonthlyExpenses().orderBy("yearMonthId", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
                 ArrayList<String> yearMonthKeys = new ArrayList<>();
                 if (queryDocumentSnapshots != null) {
                     List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                    Collections.reverse(documents);
                     for (DocumentSnapshot monthlyExpenseSnapshot : documents) {
                         yearMonthKeys.add(monthlyExpenseSnapshot.getId());
                     }
