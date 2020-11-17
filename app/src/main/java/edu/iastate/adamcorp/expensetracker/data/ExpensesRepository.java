@@ -34,7 +34,7 @@ public class ExpensesRepository implements FirebaseAuth.AuthStateListener {
     }
 
     public Query getExpenses() {
-        return userRepository.getUserDocument().collection("expenses").orderBy("date", Query.Direction.DESCENDING);
+        return userRepository.getUserDocument().collection("expenses");
     }
 
     public DocumentReference getExpense(String expenseId) {

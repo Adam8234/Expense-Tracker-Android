@@ -3,6 +3,7 @@ import {
   DocumentReference,
   DocumentSnapshot,
   FieldValue,
+  Timestamp,
   WriteBatch,
 } from "@google-cloud/firestore";
 import { Change, EventContext } from "firebase-functions";
@@ -54,6 +55,10 @@ export async function handleWriteExpense(
   const expenseRef = change.after.ref;
   const categoriesCollectionRef = getCategoriesCollection(context);
   const monthlyCollectionRef = getMonthlyExpensesCollection(context);
+  if (change.before.data()?.date !== change.after.data()?.date) {
+    const date: Timestamp = change.after.data()?.date;
+    await change.after.ref.update({ dateEpoch: date.toMillis() });
+  }
 
   await updateTotalsInDocCollection(
     categoriesCollectionRef,

@@ -2,6 +2,9 @@ package edu.iastate.adamcorp.expensetracker.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,11 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.Query;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 import edu.iastate.adamcorp.expensetracker.R;
+import edu.iastate.adamcorp.expensetracker.data.ExpensesRepository;
 import edu.iastate.adamcorp.expensetracker.data.models.Expense;
 import edu.iastate.adamcorp.expensetracker.di.ViewModelFactory;
 import edu.iastate.adamcorp.expensetracker.ui.viewholders.ExpenseViewHolder;
@@ -30,8 +35,35 @@ import edu.iastate.adamcorp.expensetracker.ui.viewmodel.ExpenseListViewModel;
 public class ExpenseListFragment extends DaggerFragment implements View.OnClickListener {
     @Inject
     ViewModelFactory viewModelFactory;
+    @Inject
+    ExpensesRepository expensesRepository;
+
     private ExpenseListViewModel expenseListViewModel;
     private FirestoreRecyclerAdapter<Expense, ExpenseViewHolder> recyclerAdapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_expense_list_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.date_asc) {
+            recyclerAdapter.updateOptions(expenseListViewModel.expenseListRecyclerOptions(Query.Direction.ASCENDING));
+            recyclerAdapter.startListening();
+        } else if(item.getItemId() == R.id.date_dsc) {
+            recyclerAdapter.updateOptions(expenseListViewModel.expenseListRecyclerOptions(Query.Direction.DESCENDING));
+            recyclerAdapter.startListening();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Nullable
     @Override
