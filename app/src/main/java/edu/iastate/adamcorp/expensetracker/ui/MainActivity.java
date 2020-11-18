@@ -1,9 +1,7 @@
 package edu.iastate.adamcorp.expensetracker.ui;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -27,18 +25,15 @@ import edu.iastate.adamcorp.expensetracker.data.ExpensesRepository;
 import edu.iastate.adamcorp.expensetracker.data.UserRepository;
 
 public class MainActivity extends DaggerAppCompatActivity {
+    @Inject
+    ExpensesRepository expensesRepository;
+    @Inject
+    FirebaseMessaging firebaseMessaging;
+    @Inject
+    UserRepository userRepository;
     private BottomNavigationView mNavBottomView;
     private Toolbar mToolbar;
     private NavController mNavController;
-    @Inject
-    ExpensesRepository expensesRepository;
-
-    @Inject
-    FirebaseMessaging firebaseMessaging;
-
-    @Inject
-    UserRepository userRepository;
-
     private AppBarConfiguration appBarConfiguration;
 
     @Override

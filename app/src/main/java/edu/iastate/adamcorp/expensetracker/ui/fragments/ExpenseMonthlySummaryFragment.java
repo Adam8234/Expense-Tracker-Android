@@ -1,6 +1,5 @@
 package edu.iastate.adamcorp.expensetracker.ui.fragments;
 
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,8 +69,8 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.toggle_graph_menu) {
-            if(pieChart.getVisibility() == View.VISIBLE) {
+        if (item.getItemId() == R.id.toggle_graph_menu) {
+            if (pieChart.getVisibility() == View.VISIBLE) {
                 pieChart.setVisibility(View.GONE);
             } else {
                 pieChart.setVisibility(View.VISIBLE);
@@ -106,7 +105,7 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 MonthlyExpense monthlyExpense = value.toObject(MonthlyExpense.class);
-                if(monthlyExpense == null || monthlyExpense.getMonthlyBudget() == null || monthlyExpense.getSymbol() == null) {
+                if (monthlyExpense == null || monthlyExpense.getMonthlyBudget() == null || monthlyExpense.getSymbol() == null) {
                     return;
                 }
                 totalTextView.setText(String.format("%s%.2f", monthlyExpense.getSymbol(), monthlyExpense.getTotalAmount()));
@@ -121,10 +120,10 @@ public class ExpenseMonthlySummaryFragment extends ExpenseSummaryFragment {
                 } else {
                     progressBar.setProgress(progressValue);
                 }
-                if(monthlyExpense.getTotalAmount() > monthlyExpense.getMonthlyBudget()) {
-                    DrawableCompat.setTint(progressBar.getProgressDrawable(),getResources().getColor(android.R.color.holo_red_dark) );
+                if (monthlyExpense.getTotalAmount() > monthlyExpense.getMonthlyBudget()) {
+                    DrawableCompat.setTint(progressBar.getProgressDrawable(), getResources().getColor(android.R.color.holo_red_dark));
                 } else {
-                    DrawableCompat.setTint(progressBar.getProgressDrawable(),getResources().getColor(R.color.colorAccent) );
+                    DrawableCompat.setTint(progressBar.getProgressDrawable(), getResources().getColor(R.color.colorAccent));
                 }
             }
         });

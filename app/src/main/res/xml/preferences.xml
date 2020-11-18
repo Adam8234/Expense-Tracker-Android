@@ -22,10 +22,9 @@
             android:summary="Have us send you a notification when your bills are due. Set the day of the month to be reminded. -1 to ignore."
             android:title="Bill Reminder" />
 
-        <!--<Preference
-            android:key="expense_categories"
-            android:summary="Add or Remove expense categories"
-            app:title="Expense Categories" />-->
+        <Preference
+            android:key="sign_out"
+            app:title="Sign Out" />
     </PreferenceCategory>
 
 </PreferenceScreen>

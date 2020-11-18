@@ -8,7 +8,6 @@ import edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoriesFragmen
 import edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseCategoryMonthlySummaryFragment;
 import edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseListFragment;
 import edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseMonthlySummaryFragment;
-import edu.iastate.adamcorp.expensetracker.ui.fragments.ExpenseSummaryFragment;
 import edu.iastate.adamcorp.expensetracker.ui.fragments.SettingsFragment;
 
 @Module

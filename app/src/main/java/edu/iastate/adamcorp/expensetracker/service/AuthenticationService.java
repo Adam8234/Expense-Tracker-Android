@@ -30,6 +30,7 @@ public class AuthenticationService {
     public Intent buildSignInIntent() {
         return AuthUI.getInstance()
                 .createSignInIntentBuilder()
+                .setIsSmartLockEnabled(false, false)
                 .setAvailableProviders(getProviders()).build();
     }
 
@@ -44,5 +45,9 @@ public class AuthenticationService {
 
     public List<AuthUI.IdpConfig> getProviders() {
         return providers;
+    }
+
+    public void signOut() {
+        firebaseAuth.signOut();
     }
 }

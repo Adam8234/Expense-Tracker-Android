@@ -23,7 +23,7 @@ public class ExpenseTrackerApp extends DaggerApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("bill_notifications", "Bill Notifications", NotificationManager.IMPORTANCE_DEFAULT);
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
         }

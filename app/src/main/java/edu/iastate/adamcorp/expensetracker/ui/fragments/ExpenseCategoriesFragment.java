@@ -48,7 +48,6 @@ public class ExpenseCategoriesFragment extends DaggerFragment implements View.On
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
 
 
-
         LinearLayoutManager manager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(manager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),

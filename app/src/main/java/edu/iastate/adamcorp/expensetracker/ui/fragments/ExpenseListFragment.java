@@ -55,16 +55,16 @@ public class ExpenseListFragment extends DaggerFragment implements View.OnClickL
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.date_asc) {
+        if (item.getItemId() == R.id.date_asc) {
             recyclerAdapter.updateOptions(expenseListViewModel.expenseListRecyclerOptionsByDate(Query.Direction.ASCENDING));
             recyclerAdapter.startListening();
-        } else if(item.getItemId() == R.id.date_dsc) {
+        } else if (item.getItemId() == R.id.date_dsc) {
             recyclerAdapter.updateOptions(expenseListViewModel.expenseListRecyclerOptionsByDate(Query.Direction.DESCENDING));
             recyclerAdapter.startListening();
-        } else if(item.getItemId() == R.id.amount_asc) {
+        } else if (item.getItemId() == R.id.amount_asc) {
             recyclerAdapter.updateOptions(expenseListViewModel.expenseListRecyclerOptionsByAmount(Query.Direction.ASCENDING));
             recyclerAdapter.startListening();
-        } else if(item.getItemId() == R.id.amount_dsc) {
+        } else if (item.getItemId() == R.id.amount_dsc) {
             recyclerAdapter.updateOptions(expenseListViewModel.expenseListRecyclerOptionsByAmount(Query.Direction.DESCENDING));
             recyclerAdapter.startListening();
         }
