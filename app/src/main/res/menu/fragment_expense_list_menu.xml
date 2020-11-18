@@ -5,13 +5,29 @@
         android:id="@+id/sort"
         app:showAsAction="always"
         android:icon="@drawable/ic_baseline_sort_24">
+
         <menu>
-            <item
-                android:id="@+id/date_asc"
-                android:title="Date Ascending" />
-            <item
-                android:id="@+id/date_dsc"
-                android:title="Date Descending" />
+            <item android:id="@+id/date" android:title="Date" >
+                <menu>
+                    <item
+                        android:id="@+id/date_asc"
+                        android:title="Date Ascending" />
+                    <item
+                        android:id="@+id/date_dsc"
+                        android:title="Date Descending" />
+                </menu>
+            </item>
+            <item android:id="@+id/amount" android:title="Amount" >
+                <menu>
+                    <item
+                        android:id="@+id/amount_asc"
+                        android:title="Amount Ascending" />
+                    <item
+                        android:id="@+id/amount_dsc"
+                        android:title="Amount Descending" />
+                </menu>
+            </item>
+
         </menu>
     </item>
 </menu>

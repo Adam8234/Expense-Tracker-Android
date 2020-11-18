@@ -26,10 +26,19 @@ public class ExpenseListViewModel extends ViewModel {
                 .build();
     }
 
-    public FirestoreRecyclerOptions<Expense> expenseListRecyclerOptions(Query.Direction direction) {
-        Query expenses = this.expensesRepository.getExpenses().orderBy("date", direction);
+    public FirestoreRecyclerOptions<Expense> expenseListRecyclerOptionsByDate(Query.Direction direction) {
+        Query query = this.expensesRepository.getExpenses().orderBy("date", direction);
+        return expenseListRecyclerOptions(query);
+    }
+
+    public FirestoreRecyclerOptions<Expense> expenseListRecyclerOptionsByAmount(Query.Direction direction) {
+        Query query = this.expensesRepository.getExpenses().orderBy("amount", direction);
+        return expenseListRecyclerOptions(query);
+    }
+
+    public FirestoreRecyclerOptions<Expense> expenseListRecyclerOptions(Query query) {
         return new FirestoreRecyclerOptions.Builder<Expense>()
-                .setQuery(expenses, Expense.class)
+                .setQuery(query, Expense.class)
                 .build();
     }
 }
